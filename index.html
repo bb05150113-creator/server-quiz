@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>伺服器選擇題手機練習</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--blue:#2563eb;--blue2:#dbeafe;--red:#dc2626;--red2:#fee2e2;--green:#15803d;--green2:#dcfce7;--yellow:#fef3c7;--purple:#7c3aed;--purple2:#ede9fe;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;line-height:1.55}
+header{position:sticky;top:0;z-index:9;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);padding:12px 14px;backdrop-filter:blur(8px)}
+.wrap{max-width:760px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:0 0 6px}
+.sub{font-size:13px;color:var(--muted)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;font-size:13px;color:var(--muted)}
+.bar{height:9px;background:#eef2ff;border-radius:99px;overflow:hidden;flex:1}
+#barFill{height:100%;background:var(--blue);width:0%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 22px rgba(31,41,55,.06)}
+.notice{background:var(--yellow);border:1px solid #f59e0b;color:#78350f;padding:11px;border-radius:13px;font-size:14px;margin-bottom:14px}
+.shuffleNotice{background:var(--purple2);border:1px solid #c4b5fd;color:#4c1d95;padding:10px;border-radius:13px;font-size:14px;margin-bottom:12px;font-weight:700}
+.qnum{font-weight:800;color:var(--blue);margin-bottom:8px}
+.question{font-size:18px;font-weight:800;margin:0 0 14px}
+.option{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px 12px;margin:10px 0;cursor:pointer}
+.option input{width:20px;height:20px;margin-top:2px;accent-color:var(--blue);flex:0 0 auto}
+.option.selected{border-color:var(--blue);background:var(--blue2)}
+.letter{font-weight:900;min-width:24px}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+button{border:0;border-radius:14px;padding:13px 12px;font-size:16px;font-weight:800;color:#fff;background:var(--blue);min-height:48px}
+button.secondary{background:#e5e7eb;color:#111827}
+button.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+button.danger{background:#ef4444;color:#fff}
+button.purple{background:var(--purple);color:#fff}
+button:disabled{opacity:.45}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.quick button{background:#fff;color:var(--muted);border:1px solid var(--line);min-height:35px;border-radius:99px;padding:7px 10px;font-size:13px}
+.quick button.answered{background:var(--blue2);color:var(--blue);border-color:#93c5fd}
+.quick button.current{background:var(--blue);color:#fff;border-color:var(--blue)}
+.hidden{display:none!important}
+.result{text-align:center}
+.score{font-size:44px;font-weight:900;color:var(--blue);margin:5px 0}
+.pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0 16px}
+.pill{padding:8px 11px;border-radius:99px;background:#f3f4f6;font-weight:800}
+.wrongList{display:grid;gap:12px;margin-top:14px}
+.wrongItem{text-align:left;border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px}
+.allListTitle{text-align:left;font-size:18px;font-weight:900;margin:18px 0 8px}
+.answerStatus{display:inline-block;padding:3px 8px;border-radius:999px;font-weight:900;margin-left:6px}
+.answerStatus.ok{background:var(--green2);color:var(--green)}
+.answerStatus.no{background:var(--red2);color:var(--red)}
+.answerStatus.empty{background:var(--yellow);color:#78350f}
+.answerLine{margin-top:5px}
+.good{color:var(--green);font-weight:900}
+.bad{color:var(--red);font-weight:900}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin:14px 0}
+@media(max-width:420px){.wrap{padding:12px}.card{padding:15px;border-radius:16px}.question{font-size:17px}button{font-size:15px}}
+
+/* 手機長指令換行、手指觸控與鍵盤操作 */
+.question,.option,.wrongItem{overflow-wrap:anywhere;word-break:normal}
+.option>span:last-child{min-width:0;flex:1}
+.quick button{min-width:44px;min-height:44px;touch-action:manipulation}
+button,.option{touch-action:manipulation}
+button:not(:disabled),.option{cursor:pointer}
+button:focus-visible,.option:focus-within{outline:3px solid #7c3aed;outline-offset:3px}
+.notice,.shuffleNotice{line-height:1.6}
+header{padding-top:max(12px,env(safe-area-inset-top))}
+main.wrap{padding-bottom:max(20px,env(safe-area-inset-bottom))}
+@media(max-width:420px){h1{font-size:20px}.question{font-size:18px}.option{padding:14px 11px}.shuffleNotice{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap" style="padding:0"><h1>伺服器選擇題手機練習</h1><div class="sub">100 題單選題｜每次開始練習都會打亂題目與選項｜交卷後顯示全部結果</div><div class="row"><span id="progressText">第 1 / 100 題</span><div class="bar"><div id="barFill"></div></div><span id="answeredText">0/100</span></div></div></header>
+<main class="wrap">
+<section id="quizArea" class="card">
+<div class="notice">點選選項即可作答，本次練習會記住你的選擇。按「交卷看結果」後，才會顯示正確答案。</div>
+<div class="shuffleNotice">這版會在「開啟頁面、重新練習全部、只重練錯題」時重新打亂題目順序，也會重新打亂每題的 A/B/C/D 選項順序。結果頁不會顯示原本題號，只顯示本次練習順序。</div>
+<div id="qnum" class="qnum"></div>
+<p id="question" class="question"></p>
+<div id="options"></div>
+<div class="nav"><button id="prevBtn" class="secondary" type="button">上一題</button><button id="nextBtn" type="button">下一題</button></div>
+<div class="nav"><button id="clearBtn" class="ghost" type="button">清除本題</button><button id="submitBtn" class="danger" type="button">交卷看結果</button></div>
+<div id="quickNav" class="quick"></div>
+</section>
+<section id="resultArea" class="card result hidden">
+<h2>練習結果</h2>
+<div id="scoreText" class="score"></div><div id="scoreDetail" class="sub"></div>
+<div class="pills"><div id="correctCount" class="pill"></div><div id="wrongCount" class="pill"></div><div id="emptyCount" class="pill"></div></div>
+<div class="nav"><button id="reviewWrongBtn" type="button">收合 / 展開全部結果</button><button id="retryWrongBtn" class="ghost" type="button">只重練錯題</button></div>
+<div class="nav"><button id="backToQuizBtn" class="secondary" type="button">回題目檢查</button><button id="restartBtn" class="danger" type="button">重新練習全部</button></div>
+<div class="nav"><button id="shuffleRestartBtn" class="purple" type="button">重新打亂題目與選項</button><button id="topBtn" class="secondary" type="button">回到頁首</button></div>
+<div id="allListTitle" class="allListTitle">全部題目結果</div>
+<div id="wrongList" class="wrongList"></div>
+</section>
+<div class="footer">單一 HTML 檔，可離線練習。請以 Safari／Chrome 開啟；重新整理或關閉頁面後，作答紀錄會清除。</div>
+</main>
+<noscript><p class="notice">請在 Safari 或 Chrome 開啟此檔案，並啟用 JavaScript，即可開始練習。</p></noscript>
+<script>
+(function(){
+var ALL_QUESTIONS = [{"id":1,"question":"伺服器（Server）與用戶端電腦的主要區別是什麼？","options":{"A":"伺服器重視持續提供服務、處理多個請求及可靠性","B":"伺服器不需要管理資料存取權限","C":"伺服器只在使用者登入時才需要供電","D":"伺服器主要負責個人的影音娛樂"},"answer":"A","answerText":"伺服器重視持續提供服務、處理多個請求及可靠性"},{"id":2,"question":"在用戶端／伺服器架構中，通常由哪一方提出服務請求？","options":{"A":"用戶端","B":"備援電源供應器","C":"網路機櫃","D":"儲存控制器"},"answer":"A","answerText":"用戶端"},{"id":3,"question":"使用瀏覽器瀏覽網站時，下列哪一項扮演用戶端的角色？","options":{"A":"網站使用的資料庫服務","B":"使用者電腦上的網頁瀏覽器","C":"儲存網站內容的伺服器","D":"網站後端的網頁服務程式"},"answer":"B","answerText":"使用者電腦上的網頁瀏覽器"},{"id":4,"question":"下列哪一項最符合「軟體伺服器」的概念？","options":{"A":"連接儲存裝置的訊號線","B":"機櫃中的電源供應器","C":"安裝於主機上、提供網頁服務的應用程式","D":"主機內用於散熱的風扇"},"answer":"C","answerText":"安裝於主機上、提供網頁服務的應用程式"},{"id":5,"question":"企業希望集中儲存文件，讓員工透過網路共同存取，最直接對應哪一種伺服器？","options":{"A":"DNS 伺服器","B":"NTP 伺服器","C":"DHCP 伺服器","D":"檔案伺服器"},"answer":"D","answerText":"檔案伺服器"},{"id":6,"question":"需要管理訂單、會員及交易紀錄等結構化資料時，主要使用哪一種伺服器？","options":{"A":"NTP 伺服器","B":"代理伺服器","C":"DHCP 伺服器","D":"資料庫伺服器"},"answer":"D","answerText":"資料庫伺服器"},{"id":7,"question":"DNS 伺服器的主要用途是什麼？","options":{"A":"提供磁碟區塊給遠端主機","B":"同步用戶端的系統時間","C":"將網域名稱解析為對應的 IP 位址","D":"自動分配用戶端的 IP 租約"},"answer":"C","answerText":"將網域名稱解析為對應的 IP 位址"},{"id":8,"question":"代理伺服器（Proxy Server）在網路通訊中主要扮演什麼角色？","options":{"A":"取代交換器的所有實體連接埠","B":"在用戶端與目標伺服器之間轉送請求與回應","C":"將所有檔案轉換成資料庫表格","D":"替每台用戶端安裝實體硬碟"},"answer":"B","answerText":"在用戶端與目標伺服器之間轉送請求與回應"},{"id":9,"question":"下列哪一組「伺服器類型與軟體」的配對正確？","options":{"A":"網頁伺服器－Apache HTTP Server","B":"資料庫伺服器－vsftpd","C":"FTP 伺服器－BIND","D":"DNS 伺服器－MySQL"},"answer":"A","answerText":"網頁伺服器－Apache HTTP Server"},{"id":10,"question":"Active Directory 在 Windows 企業環境中的主要用途是什麼？","options":{"A":"集中管理身分驗證與網路資源存取","B":"提高硬碟的實體轉速","C":"自動調整所有網路線的長度","D":"替代所有資料庫查詢功能"},"answer":"A","answerText":"集中管理身分驗證與網路資源存取"},{"id":11,"question":"關於硬體伺服器與軟體服務的關係，下列何者正確？","options":{"A":"同一台硬體主機可依資源與設定提供多種服務","B":"一台硬體主機只能安裝一種服務程式","C":"軟體伺服器不需要任何運算資源即可執行","D":"只要有伺服器硬體，就不需要安裝服務程式"},"answer":"A","answerText":"同一台硬體主機可依資源與設定提供多種服務"},{"id":12,"question":"關於用戶端請求網頁的處理流程，下列順序何者正確？","options":{"A":"瀏覽器送出請求→伺服器處理→回傳資料→瀏覽器呈現","B":"伺服器回傳資料→瀏覽器送出請求→瀏覽器呈現→伺服器處理","C":"瀏覽器送出請求→瀏覽器呈現尚未收到的資料→伺服器處理→回傳資料","D":"瀏覽器呈現所有內容→伺服器處理→瀏覽器送出請求→回傳資料"},"answer":"A","answerText":"瀏覽器送出請求→伺服器處理→回傳資料→瀏覽器呈現"},{"id":13,"question":"共用主機（Shared Hosting）的主要特性為何？","options":{"A":"每個網站都獨占一台實體伺服器","B":"使用者一定具有完整的硬體控制權","C":"多個網站共用伺服器資源，通常較省成本","D":"其他網站的負載完全不可能影響效能"},"answer":"C","answerText":"多個網站共用伺服器資源，通常較省成本"},{"id":14,"question":"與共用主機相比，VPS 的主要特色為何？","options":{"A":"完全不需要維護作業系統","B":"提供較獨立的作業系統環境與設定彈性","C":"不使用任何虛擬化技術","D":"所有使用者必須共用同一組管理員帳號"},"answer":"B","answerText":"提供較獨立的作業系統環境與設定彈性"},{"id":15,"question":"企業選用獨立主機（Dedicated Server）時，最需要一併考量哪一項條件？","options":{"A":"較高的成本與維護管理需求","B":"必須與其他企業共用作業系統帳號","C":"無法自行配置應用程式","D":"只能提供靜態網頁服務"},"answer":"A","answerText":"較高的成本與維護管理需求"},{"id":16,"question":"雲端主機的「按需付費」主要是指什麼？","options":{"A":"只能以購買整台實體伺服器的方式付款","B":"費用依使用的資源與服務計費方式計算","C":"只要網站沒有訪客，所有資源一定免費","D":"一次付款後即可永久無限制使用"},"answer":"B","answerText":"費用依使用的資源與服務計費方式計算"},{"id":17,"question":"小型社團只需架設低流量網站，預算有限，也不需要自行管理作業系統。依講義的選擇原則，何者較適合？","options":{"A":"租用多台專屬實體主機","B":"共用主機","C":"建置專用儲存區域網路取代網站主機","D":"自購高階獨立主機並自建機房"},"answer":"B","answerText":"共用主機"},{"id":18,"question":"企業要求實體主機資源由自己專用，並可自行決定軟硬體配置，也願意負擔維護成本。最符合哪一種方案？","options":{"A":"共用主機","B":"獨立主機","C":"僅申請 DNS 解析服務","D":"僅租用共享檔案資料夾"},"answer":"B","answerText":"獨立主機"},{"id":19,"question":"購物網站在促銷期間流量大增，平時流量較低，並希望依需求調整資源。最應優先評估哪一項能力？","options":{"A":"螢幕是否具備高更新率","B":"是否能停用所有監控功能","C":"是否能讓所有網站共用管理員密碼","D":"雲端主機的彈性擴充能力"},"answer":"D","answerText":"雲端主機的彈性擴充能力"},{"id":20,"question":"學校需要讓學生以網址進入選課網站，並儲存選課紀錄。下列服務分工何者最合理？","options":{"A":"檔案伺服器分配 IP，代理伺服器取代所有資料表","B":"DNS 儲存所有選課資料，資料庫負責解析網址","C":"DHCP 產生網頁內容，NTP 儲存選課紀錄","D":"DNS 解析名稱、網頁服務回應操作、資料庫儲存紀錄"},"answer":"D","answerText":"DNS 解析名稱、網頁服務回應操作、資料庫儲存紀錄"},{"id":21,"question":"IOPS 主要衡量儲存裝置的哪一項能力？","options":{"A":"硬碟累計運作的小時數","B":"每秒完成的輸入與輸出操作次數","C":"每秒傳輸的位元組數","D":"可儲存的檔案總數"},"answer":"B","answerText":"每秒完成的輸入與輸出操作次數"},{"id":22,"question":"SSD 與傳統 HDD 的主要結構差異為何？","options":{"A":"SSD 通常使用快閃記憶體，HDD 使用旋轉碟片與讀寫頭","B":"HDD 只能透過網路連線使用","C":"SSD 必須使用旋轉碟片，HDD 則完全沒有機械零件","D":"兩者都必須使用相同轉速的馬達"},"answer":"A","answerText":"SSD 通常使用快閃記憶體，HDD 使用旋轉碟片與讀寫頭"},{"id":23,"question":"快閃記憶體屬於非揮發性記憶體，這代表什麼？","options":{"A":"所有尚未寫入的快取資料都保證不會遺失","B":"必須持續供電才能保留任何資料","C":"只能讀取，完全無法重新寫入","D":"已儲存的資料不需持續供電即可保留"},"answer":"D","answerText":"已儲存的資料不需持續供電即可保留"},{"id":24,"question":"下列哪一種情境最符合 DAS（直接連接儲存）？","options":{"A":"向 DHCP 伺服器申請 IP","B":"透過 NTP 同步時間","C":"伺服器直接連接自己的儲存硬碟","D":"透過 SMB 開啟遠端共享資料夾"},"answer":"C","answerText":"伺服器直接連接自己的儲存硬碟"},{"id":25,"question":"NAS 最主要提供哪一種存取方式？","options":{"A":"透過網路進行檔案層級存取","B":"只提供時間同步","C":"只提供 CPU 指令運算","D":"只提供 IP 位址轉換"},"answer":"A","answerText":"透過網路進行檔案層級存取"},{"id":26,"question":"Windows 環境存取 NAS 共享資料夾時，常用哪一種協定？","options":{"A":"NTP","B":"DHCP","C":"SMB","D":"ICMP"},"answer":"C","answerText":"SMB"},{"id":27,"question":"在 iSCSI 架構中，提供儲存資源的一端稱為什麼？","options":{"A":"Target","B":"Resolver","C":"DHCP Client","D":"Initiator"},"answer":"A","answerText":"Target"},{"id":28,"question":"在 iSCSI 架構中，主動連線並使用遠端儲存資源的一端稱為什麼？","options":{"A":"NTP Server","B":"NAT Gateway","C":"Target","D":"Initiator"},"answer":"D","answerText":"Initiator"},{"id":29,"question":"下列關於 IOPS 與 MB/s 的說明，何者正確？","options":{"A":"IOPS 只表示硬碟容量","B":"IOPS 衡量操作次數，MB/s 衡量資料傳輸量","C":"MB/s 只可用於網路，不能用於儲存裝置","D":"兩者單位不同，但數值一定完全相同"},"answer":"B","answerText":"IOPS 衡量操作次數，MB/s 衡量資料傳輸量"},{"id":30,"question":"下列何者最能說明 SAN 與 NAS 在典型存取方式上的差別？","options":{"A":"SAN 只負責時間同步，NAS 只負責位址分配","B":"SAN 一定不能讓作業系統辨識儲存裝置","C":"SAN 提供區塊層級存取，NAS 提供檔案層級存取","D":"NAS 只提供記憶體，不提供儲存空間"},"answer":"C","answerText":"SAN 提供區塊層級存取，NAS 提供檔案層級存取"},{"id":31,"question":"iSCSI 如何透過網路提供遠端磁碟存取？","options":{"A":"將所有磁碟讀寫要求轉換成 DNS 查詢","B":"只能透過與主機相連的 SATA 排線傳送","C":"以 DHCP 租約取代磁碟區塊","D":"透過 TCP/IP 網路傳送 SCSI 命令與資料"},"answer":"D","answerText":"透過 TCP/IP 網路傳送 SCSI 命令與資料"},{"id":32,"question":"講義的 iSCSI 實作中，Ubuntu 與 Rocky Linux 分別扮演什麼角色？","options":{"A":"兩者都只作為 NTP 用戶端","B":"Ubuntu 為 Initiator，Rocky Linux 為 Target","C":"Ubuntu 為 Target，Rocky Linux 為 Initiator","D":"兩者都只作為 DNS 伺服器"},"answer":"C","answerText":"Ubuntu 為 Target，Rocky Linux 為 Initiator"},{"id":33,"question":"在 tgt 設定中，backing-store /iscsi_disk/disk01.img 的用途是什麼？","options":{"A":"指定 DHCP 位址池的範圍","B":"指定 FTP 歡迎訊息","C":"指定系統時區","D":"指定提供給 Target 使用的後端儲存檔案"},"answer":"D","answerText":"指定提供給 Target 使用的後端儲存檔案"},{"id":34,"question":"在 tgt 課程示範中，initiator-address ALL 代表什麼？","options":{"A":"只允許本機回送位址連線","B":"禁止所有用戶端連線","C":"在此位址限制設定中允許所有 Initiator 來源","D":"將所有遠端磁碟設為唯讀"},"answer":"C","answerText":"在此位址限制設定中允許所有 Initiator 來源"},{"id":35,"question":"Rocky Linux 連線至 iSCSI Target 後，可用哪一個指令查看區塊裝置？","options":{"A":"ntpq -p","B":"ftp localhost","C":"lsblk","D":"systemctl status vsftpd"},"answer":"C","answerText":"lsblk"},{"id":36,"question":"執行 mount /dev/sdb /mnt/iscsi_disk 的主要目的為何？","options":{"A":"重新啟動 iSCSI Target 服務","B":"將磁碟內容全部格式化","C":"建立新的 DHCP 租約","D":"將裝置上的檔案系統掛載到指定目錄"},"answer":"D","answerText":"將裝置上的檔案系統掛載到指定目錄"},{"id":37,"question":"某儲存裝置在固定測試條件下每秒完成 2,000 次讀取，每次讀取 4 KiB，不計其他負擔，其 IOPS 與資料量何者正確？","options":{"A":"2,000 IOPS，約 8,000 KiB/s","B":"8,000 IOPS，約 2,000 KiB/s","C":"2,000 IOPS，約 4 KiB/s","D":"500 IOPS，約 8,000 KiB/s"},"answer":"A","answerText":"2,000 IOPS，約 8,000 KiB/s"},{"id":38,"question":"管理員要對新接上的 iSCSI 磁碟執行 mkfs.ext4，最適當的處理方式為何？","options":{"A":"先確認裝置名稱與資料是否需要保留，再對正確裝置格式化","B":"先格式化所有磁碟，再確認哪顆是遠端磁碟","C":"直接假設 /dev/sdb 永遠是新磁碟","D":"只確認 Target 的主機名稱，不檢查磁碟裝置"},"answer":"A","answerText":"先確認裝置名稱與資料是否需要保留，再對正確裝置格式化"},{"id":39,"question":"公司需要將遠端儲存空間呈現為主機可分割與格式化的磁碟，並利用既有 TCP/IP 網路連線。哪一種方式最符合需求？","options":{"A":"僅使用 SMB 共享資料夾","B":"僅使用 DHCP 位址保留","C":"僅使用 NTP 同步","D":"iSCSI"},"answer":"D","answerText":"iSCSI"},{"id":40,"question":"iSCSI Target 已啟動，但 Initiator 看不到新磁碟。下列哪一組檢查最直接相關？","options":{"A":"檢查網路連通、Target 設定、來源限制與 Initiator 登入結果","B":"只調整 FTP 的登入歡迎訊息","C":"只更換終端機文字顏色","D":"只延長 DHCP 的最大租約時間"},"answer":"A","answerText":"檢查網路連通、Target 設定、來源限制與 Initiator 登入結果"},{"id":41,"question":"FTP 的主要用途是什麼？","options":{"A":"轉換來源與目的 IP 位址","B":"自動分配 IP 位址","C":"透過網路上傳與下載檔案","D":"調整系統時間"},"answer":"C","answerText":"透過網路上傳與下載檔案"},{"id":42,"question":"講義在 Ubuntu 上安裝哪一套 FTP 伺服器軟體？","options":{"A":"ntpdate","B":"isc-dhcp-server","C":"tgt","D":"vsftpd"},"answer":"D","answerText":"vsftpd"},{"id":43,"question":"講義中的 vsftpd 主要設定檔路徑為何？","options":{"A":"/var/lib/dhcp/dhcpd.leases","B":"/etc/dhcp/dhcpd.conf","C":"/etc/vsftpd.conf","D":"/etc/fstab"},"answer":"C","answerText":"/etc/vsftpd.conf"},{"id":44,"question":"執行 ftp localhost 主要是在測試哪一個對象？","options":{"A":"網路上所有 FTP 伺服器","B":"預設 DNS 伺服器","C":"DHCP 位址池中的第一台主機","D":"目前這台主機上的 FTP 服務"},"answer":"D","answerText":"目前這台主機上的 FTP 服務"},{"id":45,"question":"在 FTP 互動指令中，put 學號.txt 的用途是什麼？","options":{"A":"下載遠端所有檔案","B":"刪除本機目錄","C":"將本機檔案上傳到 FTP 伺服器","D":"重新啟動 FTP 服務"},"answer":"C","answerText":"將本機檔案上傳到 FTP 伺服器"},{"id":46,"question":"在 FTP 互動指令中，dir 的主要用途為何？","options":{"A":"列出遠端目前目錄的內容","B":"變更本機 IP 位址","C":"中止所有網路服務","D":"重新設定系統時區"},"answer":"A","answerText":"列出遠端目前目錄的內容"},{"id":47,"question":"NTP 服務的主要功能是什麼？","options":{"A":"管理 FTP 使用者的上傳目錄","B":"同步電腦的系統時間","C":"分配用戶端 IP 位址","D":"提供網路磁碟區塊"},"answer":"B","answerText":"同步電腦的系統時間"},{"id":48,"question":"FileZilla Client 在講義中的用途是什麼？","options":{"A":"以圖形介面連線 FTP 伺服器並傳輸檔案","B":"取代 Linux 的防火牆核心","C":"作為 iSCSI Target 後端磁碟","D":"提供 DHCP 租約資料庫"},"answer":"A","answerText":"以圖形介面連線 FTP 伺服器並傳輸檔案"},{"id":49,"question":"vsftpd 的 anonymous_enable=NO 表示什麼？","options":{"A":"不允許管理員查看服務狀態","B":"不允許匿名登入","C":"不允許任何檔案下載","D":"不允許所有本機帳號登入"},"answer":"B","answerText":"不允許匿名登入"},{"id":50,"question":"vsftpd 的 local_enable=YES 主要允許什麼？","options":{"A":"使用本機使用者帳號登入 FTP","B":"讓所有訪客取得管理員權限","C":"將所有檔案設定為可執行","D":"自動建立 DHCP 位址池"},"answer":"A","answerText":"使用本機使用者帳號登入 FTP"},{"id":51,"question":"vsftpd 的 write_enable=YES 應如何理解？","options":{"A":"不論目錄權限為何，任何人都可寫入","B":"自動將所有目錄權限改成 777","C":"只允許下載，禁止上傳","D":"啟用 FTP 寫入操作，但仍須符合目錄權限及其他設定"},"answer":"D","answerText":"啟用 FTP 寫入操作，但仍須符合目錄權限及其他設定"},{"id":52,"question":"vsftpd 設定 chroot_local_user=YES 的主要用途為何？","options":{"A":"限制本機 FTP 使用者可存取的目錄範圍","B":"讓使用者略過所有檔案權限","C":"自動將使用者升級為 root","D":"將所有 FTP 檔案轉換為唯讀光碟映像"},"answer":"A","answerText":"限制本機 FTP 使用者可存取的目錄範圍"},{"id":53,"question":"若要設定 FTP 登入後控制連線閒置多久就中斷，應調整哪一個參數？","options":{"A":"ftpd_banner","B":"idle_session_timeout","C":"local_enable","D":"anonymous_enable"},"answer":"B","answerText":"idle_session_timeout"},{"id":54,"question":"修改 vsftpd 設定後，依講義應如何讓服務重新載入設定並確認狀態？","options":{"A":"重新啟動 vsftpd，再查看服務狀態","B":"只重新整理 FTP 目錄清單","C":"只關閉文字編輯器，不處理服務","D":"只變更用戶端的桌面背景"},"answer":"A","answerText":"重新啟動 vsftpd，再查看服務狀態"},{"id":55,"question":"依講義，可使用哪一個指令查看 NTP 對等時間來源資訊？","options":{"A":"dhcp-lease-list","B":"iptables -F","C":"ntpq -p","D":"lsblk"},"answer":"C","answerText":"ntpq -p"},{"id":56,"question":"要查看目前系統時間與時區設定，講義使用哪一個指令？","options":{"A":"timedatectl status","B":"mkdir /home/ubuntu/ftp","C":"ftp localhost","D":"systemctl status tgt"},"answer":"A","answerText":"timedatectl status"},{"id":57,"question":"使用者可以登入 FTP 並列出檔案，但無法上傳；已確認 write_enable=YES，且目標目錄沒有給該使用者寫入權限。最合理的處理方式為何？","options":{"A":"將 NTP 伺服器改成另一個網域名稱","B":"檢查並調整目標目錄的擁有者與必要寫入權限","C":"只修改 ftpd_banner","D":"增加 DHCP 租約時間"},"answer":"B","answerText":"檢查並調整目標目錄的擁有者與必要寫入權限"},{"id":58,"question":"FTP 設定 idle_session_timeout=600，使用者登入後未操作且被此設定中斷，對應的閒置時間為何？","options":{"A":"60 分鐘","B":"600 分鐘","C":"10 分鐘","D":"6 分鐘"},"answer":"C","answerText":"10 分鐘"},{"id":59,"question":"FTP 在伺服器本機以 localhost 測試成功，但另一台電腦無法連線。下列哪一組檢查最合理？","options":{"A":"只修改 FTP 歡迎訊息","B":"檢查遠端使用的 IP、網路連通與防火牆是否允許 FTP 連線","C":"只修改本機測試檔案的內容","D":"先將所有儲存磁碟格式化"},"answer":"B","answerText":"檢查遠端使用的 IP、網路連通與防火牆是否允許 FTP 連線"},{"id":60,"question":"管理員希望 Windows 電腦向課堂架設的 Ubuntu NTP 伺服器校時，下列何者最能驗證端到端設定成功？","options":{"A":"只確認 Ubuntu 已下載 NTP 套件","B":"只確認 Windows 能開啟 FTP 軟體","C":"Windows 指定該 NTP 伺服器後，實際執行同步並確認成功","D":"只確認 Ubuntu 的主機名稱包含 ntp"},"answer":"C","answerText":"Windows 指定該 NTP 伺服器後，實際執行同步並確認成功"},{"id":61,"question":"防火牆可依下列哪一項資訊控制封包是否通過？","options":{"A":"鍵盤的按鍵數量","B":"電腦機殼的顏色","C":"來源 IP、通訊協定與目的埠號","D":"使用者螢幕的亮度"},"answer":"C","answerText":"來源 IP、通訊協定與目的埠號"},{"id":62,"question":"iptables 未使用 -t 指定表格時，預設使用哪一個表格？","options":{"A":"filter","B":"raw","C":"nat","D":"mangle"},"answer":"A","answerText":"filter"},{"id":63,"question":"送往本機服務的封包，主要由 filter 表格中的哪一條鏈處理？","options":{"A":"POSTROUTING","B":"INPUT","C":"OUTPUT","D":"FORWARD"},"answer":"B","answerText":"INPUT"},{"id":64,"question":"由本機程式產生並送出的封包，主要由 filter 表格中的哪一條鏈處理？","options":{"A":"INPUT","B":"PREROUTING","C":"FORWARD","D":"OUTPUT"},"answer":"D","answerText":"OUTPUT"},{"id":65,"question":"封包經過 Linux 主機轉送到另一台電腦，主要由 filter 表格中的哪一條鏈處理？","options":{"A":"POSTROUTING","B":"FORWARD","C":"INPUT","D":"OUTPUT"},"answer":"B","answerText":"FORWARD"},{"id":66,"question":"iptables 的 DROP 動作代表什麼？","options":{"A":"修改封包的目的 IP 位址","B":"允許封包並紀錄下載檔案","C":"丟棄封包，且不主動回傳拒絕通知","D":"建立新的 DHCP 租約"},"answer":"C","answerText":"丟棄封包，且不主動回傳拒絕通知"},{"id":67,"question":"iptables 的 REJECT 與 DROP 的主要差別為何？","options":{"A":"REJECT 拒絕封包時會回傳錯誤訊息","B":"DROP 只適用於 DNS 查詢","C":"DROP 一定會修改目的埠號","D":"REJECT 一定會允許封包通過"},"answer":"A","answerText":"REJECT 拒絕封包時會回傳錯誤訊息"},{"id":68,"question":"NAT 的主要功能是什麼？","options":{"A":"將所有網路封包加密","B":"轉換封包的 IP 位址，必要時也轉換埠號","C":"替用戶端建立檔案系統","D":"將網域名稱改成檔案名稱"},"answer":"B","answerText":"轉換封包的 IP 位址，必要時也轉換埠號"},{"id":69,"question":"關於 netfilter 與 iptables 的關係，下列何者正確？","options":{"A":"兩者都只用於 FTP 檔案上傳","B":"netfilter 是核心中的封包處理架構，iptables 是設定規則的工具","C":"netfilter 只能安裝在 Windows 用戶端","D":"iptables 是實體網路卡，netfilter 是網路線"},"answer":"B","answerText":"netfilter 是核心中的封包處理架構，iptables 是設定規則的工具"},{"id":70,"question":"iptables 指令中的 -A INPUT 代表什麼？","options":{"A":"設定 INPUT 鏈的預設政策","B":"將 INPUT 鏈的計數器歸零","C":"將規則附加到 INPUT 鏈的最後面","D":"刪除 INPUT 鏈的所有規則"},"answer":"C","answerText":"將規則附加到 INPUT 鏈的最後面"},{"id":71,"question":"iptables 指令中的 -p tcp --dport 22 用來比對什麼？","options":{"A":"所有來自 22.0.0.0 網段的封包","B":"TCP 且目的埠號為 22 的封包","C":"僅含有 22 個位元組的封包","D":"UDP 且來源埠號為 22 的封包"},"answer":"B","answerText":"TCP 且目的埠號為 22 的封包"},{"id":72,"question":"若要在 iptables 規則中限制封包的來源 IP，應使用哪一個參數？","options":{"A":"-o","B":"-s","C":"--dport","D":"-d"},"answer":"B","answerText":"-s"},{"id":73,"question":"執行 iptables -P INPUT DROP 的意義為何？","options":{"A":"刪除所有 INPUT 規則","B":"將 INPUT 內建鏈的預設政策設為丟棄","C":"立即停止所有網路服務程式","D":"將所有轉送封包的來源改成本機"},"answer":"B","answerText":"將 INPUT 內建鏈的預設政策設為丟棄"},{"id":74,"question":"SNAT 與 DNAT 的差別為何？","options":{"A":"SNAT 修改來源位址，DNAT 修改目的位址","B":"SNAT 修改目的位址，DNAT 修改來源位址","C":"兩者都只用來設定時區","D":"兩者都只能刪除封包，不能修改位址"},"answer":"A","answerText":"SNAT 修改來源位址，DNAT 修改目的位址"},{"id":75,"question":"下列哪一個 IPv4 位址屬於講義列出的私有位址範圍？","options":{"A":"172.20.1.10","B":"172.32.1.10","C":"11.0.0.10","D":"192.169.1.10"},"answer":"A","answerText":"172.20.1.10"},{"id":76,"question":"MASQUERADE 通常用於哪一種用途？","options":{"A":"將 FTP 帳號改為匿名帳號","B":"為內部電腦分配 DHCP 租約","C":"將檔案格式化為 ext4","D":"將內部封包的來源位址轉換成對外介面的位址"},"answer":"D","answerText":"將內部封包的來源位址轉換成對外介面的位址"},{"id":77,"question":"INPUT 鏈依序有「封鎖所有目的埠 22 的 TCP 封包」及「允許來源 10.24.4.10 存取 TCP 22」。沒有其他較前面的匹配規則時，該來源的新 SSH 連線會如何？","options":{"A":"因後面有允許規則而一定通過","B":"自動略過 INPUT 改由 OUTPUT 處理","C":"先符合封鎖規則而被丟棄","D":"自動轉換成 HTTP 連線"},"answer":"C","answerText":"先符合封鎖規則而被丟棄"},{"id":78,"question":"Linux 主機要將外部傳入的 TCP 80 連線導向內部網頁主機，哪一種 NAT 規則方向最適合？","options":{"A":"在 POSTROUTING 使用 SNAT 修改來源位址來指定內部目的主機","B":"在 INPUT 使用 DROP 來指定內部目的主機","C":"在 OUTPUT 使用 LOG 來修改 DHCP 租約","D":"在 PREROUTING 使用 DNAT 修改目的位址"},"answer":"D","answerText":"在 PREROUTING 使用 DNAT 修改目的位址"},{"id":79,"question":"防火牆只允許本機 INPUT 的 SSH 連線，但內部用戶端仍無法經此主機轉送封包。哪一項說明最合理？","options":{"A":"SSH 埠號會自動變成內部用戶端的預設閘道","B":"所有轉送封包都只經過 OUTPUT，不需要 FORWARD","C":"轉送流量需要檢查 FORWARD 規則，允許 INPUT 不等於允許轉送","D":"只要 INPUT 允許 SSH，所有轉送流量都應自動通過"},"answer":"C","answerText":"轉送流量需要檢查 FORWARD 規則，允許 INPUT 不等於允許轉送"},{"id":80,"question":"某封包先符合 LOG 規則，接著符合 DROP 規則。依講義的目標動作說明，結果為何？","options":{"A":"LOG 會自動將 DROP 改成 ACCEPT","B":"LOG 記錄後就必定放行，DROP 不再執行","C":"先記錄封包資訊，再丟棄封包","D":"封包被轉換成 DHCP Discover"},"answer":"C","answerText":"先記錄封包資訊，再丟棄封包"},{"id":81,"question":"DHCP 伺服器的主要功能是什麼？","options":{"A":"提供 FTP 檔案上傳空間","B":"取代所有網路防火牆","C":"將遠端磁碟格式化","D":"自動提供 IP 位址與相關網路設定"},"answer":"D","answerText":"自動提供 IP 位址與相關網路設定"},{"id":82,"question":"DHCP 的租約（Lease）是指什麼？","options":{"A":"伺服器硬碟的格式化時間","B":"用戶端獲准使用所分配 IP 位址的有效期限","C":"網路線的保固期限","D":"FTP 檔案的保存期限"},"answer":"B","answerText":"用戶端獲准使用所分配 IP 位址的有效期限"},{"id":83,"question":"DHCP 用戶端首次尋找伺服器時，通常先送出哪一種訊息？","options":{"A":"DHCP Discover","B":"DHCP NAK","C":"DHCP ACK","D":"DHCP Release"},"answer":"A","answerText":"DHCP Discover"},{"id":84,"question":"DHCP 伺服器以 ACK 回應可接受的租用要求，主要表示什麼？","options":{"A":"要求用戶端格式化硬碟","B":"要求用戶端永久停用網路卡","C":"確認用戶端可以使用核准的租約與設定","D":"通知 FTP 上傳完成"},"answer":"C","answerText":"確認用戶端可以使用核准的租約與設定"},{"id":85,"question":"在 DHCP 設定中，option routers 的用途為何？","options":{"A":"提供 FTP 根目錄","B":"設定儲存裝置的容量","C":"指定 NTP 設定檔的路徑","D":"提供用戶端預設閘道器的位址"},"answer":"D","answerText":"提供用戶端預設閘道器的位址"},{"id":86,"question":"在 DHCP 設定中，option domain-name-servers 的用途為何？","options":{"A":"提供 FTP 匿名帳號","B":"設定防火牆的預設政策","C":"提供 DNS 伺服器位址","D":"指定硬碟分割區名稱"},"answer":"C","answerText":"提供 DNS 伺服器位址"},{"id":87,"question":"講義中 Ubuntu 的 DHCP 主要設定檔為何？","options":{"A":"/etc/vsftpd.conf","B":"/etc/ntpsec/ntp.conf","C":"/etc/tgt/conf.d/iscsi.conf","D":"/etc/dhcp/dhcpd.conf"},"answer":"D","answerText":"/etc/dhcp/dhcpd.conf"},{"id":88,"question":"若要讓 isc-dhcp-server 在開機時自動啟動，應使用哪一個指令？","options":{"A":"sudo cat /etc/dhcp/dhcpd.conf","B":"sudo systemctl stop isc-dhcp-server","C":"sudo systemctl status isc-dhcp-server","D":"sudo systemctl enable isc-dhcp-server"},"answer":"D","answerText":"sudo systemctl enable isc-dhcp-server"},{"id":89,"question":"若採用講義所述的預設續租比例，租期為 8 小時，用戶端第一次嘗試續租的時間點約為何？","options":{"A":"取得租約後 1 小時","B":"取得租約後 4 小時","C":"取得租約後 7 小時","D":"取得租約後 8 小時"},"answer":"B","answerText":"取得租約後 4 小時"},{"id":90,"question":"若採用講義所述的預設比例，租期為 8 小時，第一次續租未成功後，約何時進入 87.5% 的重新繫結時間點？","options":{"A":"取得租約後 4 小時","B":"取得租約後 7 小時","C":"取得租約後 9 小時","D":"取得租約後 2 小時"},"answer":"B","answerText":"取得租約後 7 小時"},{"id":91,"question":"某 Windows 用戶端未取得 DHCP 回應，出現 169.254.x.x 位址。下列判斷何者最合理？","options":{"A":"代表網卡的 MAC 位址已改成 169.254","B":"代表一定已取得課堂設定的 DHCP 位址池位址","C":"代表一定能正常連線至網際網路","D":"可能使用了自動私有位址，應檢查 DHCP 與網路連線"},"answer":"D","answerText":"可能使用了自動私有位址，應檢查 DHCP 與網路連線"},{"id":92,"question":"設定 range 192.168.100.160 192.168.100.200; 時，不考慮其他保留與排除條件，共包含多少個位址？","options":{"A":"40 個","B":"200 個","C":"39 個","D":"41 個"},"answer":"D","answerText":"41 個"},{"id":93,"question":"在 /etc/default/isc-dhcp-server 設定 INTERFACESv4=\"enp0s8\" 的用途為何？","options":{"A":"將所有網路封包轉換成 IPv6","B":"指定 DHCPv4 服務使用的網路介面","C":"把 enp0s8 的 MAC 位址改成 IPv4","D":"設定 FTP 的匿名上傳目錄"},"answer":"B","answerText":"指定 DHCPv4 服務使用的網路介面"},{"id":94,"question":"下列哪一個指令可直接查看 DHCP 服務最近 50 筆日誌？","options":{"A":"sudo iptables -L -n -t nat","B":"sudo systemctl enable isc-dhcp-server","C":"sudo ntpq -p","D":"sudo journalctl -u isc-dhcp-server.service -n 50 --no-pager"},"answer":"D","answerText":"sudo journalctl -u isc-dhcp-server.service -n 50 --no-pager"},{"id":95,"question":"講義中 DHCP 伺服器保存租約紀錄的檔案為何？","options":{"A":"/var/lib/dhcp/dhcpd.leases","B":"/etc/vsftpd.conf","C":"/etc/tgt/conf.d/iscsi.conf","D":"/iscsi_disk/disk01.img"},"answer":"A","answerText":"/var/lib/dhcp/dhcpd.leases"},{"id":96,"question":"要讓 Linux 主機轉送 IPv4 封包，講義要求啟用哪一項設定？","options":{"A":"default-lease-time=0","B":"write_cache=off","C":"net.ipv4.ip_forward=1","D":"anonymous_enable=YES"},"answer":"C","answerText":"net.ipv4.ip_forward=1"},{"id":97,"question":"課堂 DHCP 伺服器與用戶端都使用 VirtualBox 的「內部網路」，但一台設定 intnet-2、另一台設定 intnet-3，且無其他連線路徑。用戶端無法取得租約時應先如何處理？","options":{"A":"先將用戶端硬碟格式化","B":"將兩端連接至相同名稱的內部網路","C":"只增加 DHCP 最大租約時間","D":"只修改 FTP 歡迎訊息"},"answer":"B","answerText":"將兩端連接至相同名稱的內部網路"},{"id":98,"question":"用戶端已取得正確範圍的 IP，也能連到 DHCP 伺服器，但無法經該伺服器上網。依課堂架構，最應進一步檢查哪一組項目？","options":{"A":"只檢查 DHCP 設定檔的備份檔名","B":"只檢查 iSCSI LUN 的容量","C":"只檢查 FTP 的匿名登入開關","D":"用戶端閘道器、伺服器對外連線、IP 轉送、NAT 與 FORWARD 規則"},"answer":"D","answerText":"用戶端閘道器、伺服器對外連線、IP 轉送、NAT 與 FORWARD 規則"},{"id":99,"question":"用戶端可連線至外部 IP，但輸入網站網域名稱時無法解析。若其他條件不變，應優先檢查 DHCP 提供的哪個設定？","options":{"A":"range 的結束位址","B":"INTERFACESv4 的字母大小寫","C":"option domain-name-servers","D":"default-lease-time"},"answer":"C","answerText":"option domain-name-servers"},{"id":100,"question":"在課堂架構中，192.168.100.0/24 為內網、enp0s3 為對外介面。指令 sudo iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -o enp0s3 -j MASQUERADE 的作用為何？","options":{"A":"將所有外部 TCP 80 連線轉到指定內部網頁主機","B":"禁止所有內網主機使用 DNS","C":"自動分配 192.168.100.0/24 的所有 DHCP 租約","D":"對符合來源網段且由對外介面送出的封包進行來源位址偽裝"},"answer":"D","answerText":"對符合來源網段且由對外介面送出的封包進行來源位址偽裝"}];
+var questions = [];
+var current = 0;
+var answers = {}; // answers[qid] = {letter:'A', text:'選項文字'}，letter 是本次打亂後顯示的字母
+var displayOptions = {}; // displayOptions[qid] = 本次練習的打亂選項
+var wrongOnlyMode = false;
+var currentTotal = 100;
+function $(id){return document.getElementById(id);}
+function scrollTop(){try{window.scrollTo(0,0);}catch(e){}}
+function escapeHtml(str){return String(str).replace(/[&<>"']/g,function(s){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s];});}
+function shuffle(arr){
+ var a=arr.slice();
+ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t;}
+ return a;
+}
+function getOriginalOptions(q){
+ return ['A','B','C','D'].map(function(letter){return {originalLetter:letter,text:q.options[letter],isCorrect:letter===q.answer};});
+}
+function prepareOptions(list){
+ displayOptions={};
+ for(var i=0;i<list.length;i++){
+  displayOptions[list[i].id]=shuffle(getOriginalOptions(list[i]));
+ }
+}
+function startPractice(list, isWrongOnly){
+ questions=shuffle(list.slice());
+ prepareOptions(questions);
+ answers={};
+ wrongOnlyMode=!!isWrongOnly;
+ current=0;
+ currentTotal=questions.length;
+ render();
+ scrollTop();
+}
+function answeredCurrentCount(){
+ var n=0; for(var i=0;i<questions.length;i++){if(answers[questions[i].id]) n++;} return n;
+}
+function renderQuickNav(){
+ var box=$('quickNav'); box.innerHTML='';
+ for(var i=0;i<questions.length;i++){
+  (function(idx){
+   var q=questions[idx]; var b=document.createElement('button'); b.type='button'; b.textContent=(idx+1); b.setAttribute("aria-label","前往本次練習第 "+(idx+1)+" 題");
+   if(answers[q.id]) b.className+=' answered';
+   if(idx===current) b.className+=' current';
+   b.addEventListener('click',function(){current=idx;render();scrollTop();});
+   box.appendChild(b);
+  })(i);
+ }
+}
+function render(){
+ if(!questions.length){startPractice(ALL_QUESTIONS,false); return;}
+ if(current<0) current=0; if(current>=questions.length) current=questions.length-1;
+ var q=questions[current];
+ $('quizArea').classList.remove('hidden'); $('resultArea').classList.add('hidden');
+ $('qnum').textContent=wrongOnlyMode?'錯題重練':'';
+ $('question').textContent=q.question;
+ $('progressText').textContent='第 '+(current+1)+' / '+questions.length+' 題';
+ var answered=answeredCurrentCount(); $('answeredText').textContent=answered+'/'+questions.length; $('barFill').style.width=(answered/questions.length*100)+'%';
+ var opt=$('options'); opt.innerHTML='';
+ var list=displayOptions[q.id] || getOriginalOptions(q);
+ list.forEach(function(item, idx){
+  var displayLetter=String.fromCharCode(65+idx);
+  var selected=answers[q.id] && answers[q.id].text===item.text;
+  var label=document.createElement('label'); label.className='option'+(selected?' selected':'');
+  var input=document.createElement('input'); input.type='radio'; input.name='q'+q.id; input.value=displayLetter; input.checked=selected;
+  input.addEventListener('change',function(){answers[q.id]={letter:displayLetter,text:item.text};render();});
+  var l=document.createElement('span'); l.className='letter'; l.textContent=displayLetter+'.';
+  var t=document.createElement('span'); t.textContent=item.text;
+  label.appendChild(input); label.appendChild(l); label.appendChild(t); opt.appendChild(label);
+ });
+ $('prevBtn').disabled=current===0;
+ $('nextBtn').textContent=current===questions.length-1?'交卷看結果':'下一題';
+ renderQuickNav();
+}
+function correctLetterFor(q){
+ var list=displayOptions[q.id] || getOriginalOptions(q);
+ for(var i=0;i<list.length;i++){if(list[i].text===q.answerText) return String.fromCharCode(65+i);}
+ return q.answer;
+}
+function grade(){
+ var correct=0, wrong=0, empty=0, wrongItems=[], allItems=[];
+ for(var i=0;i<questions.length;i++){
+  var q=questions[i], user=answers[q.id], status='';
+  if(!user){empty++; status='empty'; wrongItems.push({q:q,user:null,status:status});}
+  else if(user.text===q.answerText){correct++; status='correct';}
+  else{wrong++; status='wrong'; wrongItems.push({q:q,user:user,status:status});}
+  allItems.push({q:q,user:user||null,status:status});
+ }
+ return {correct:correct,wrong:wrong,empty:empty,wrongItems:wrongItems,allItems:allItems,total:questions.length};
+}
+function showResult(){
+ var g=grade(); $('quizArea').classList.add('hidden'); $('resultArea').classList.remove('hidden');
+ $('scoreText').textContent=Math.round(g.correct/g.total*100)+' 分';
+ $('scoreDetail').textContent='答對 '+g.correct+' / '+g.total+' 題';
+ $('correctCount').textContent='答對：'+g.correct+' 題'; $('wrongCount').textContent='答錯：'+g.wrong+' 題'; $('emptyCount').textContent='未作答：'+g.empty+' 題';
+ $('allListTitle').textContent=wrongOnlyMode?'錯題重練結果':'全部題目結果';
+ $('retryWrongBtn').disabled=g.wrongItems.length===0;
+ renderWrongList(false);
+ scrollTop();
+}
+function renderWrongList(toggle){
+ var g=grade(), box=$('wrongList');
+ if(toggle){box.classList.toggle('hidden'); return;}
+ box.classList.remove('hidden');
+ box.innerHTML='';
+ for(var i=0;i<g.allItems.length;i++){
+  var item=g.allItems[i], q=item.q, user=item.user;
+  var div=document.createElement('div'); div.className='wrongItem';
+  var userText=user ? user.letter+'. '+user.text : '未作答';
+  var statusText='', statusClass='';
+  if(item.status==='correct'){statusText='答對'; statusClass='ok';}
+  else if(item.status==='wrong'){statusText='答錯'; statusClass='no';}
+  else{statusText='未作答'; statusClass='empty';}
+  var correctLetter=correctLetterFor(q);
+  div.innerHTML='<div><strong>第 '+(i+1)+' 題：</strong>'+escapeHtml(q.question)+' <span class="answerStatus '+statusClass+'">'+statusText+'</span></div>'+ 
+   '<div class="answerLine '+(item.status==='correct'?'good':(item.status==='wrong'?'bad':''))+'">你的答案：'+escapeHtml(userText)+'</div>'+ 
+   '<div class="answerLine good">正確答案：'+correctLetter+'. '+escapeHtml(q.answerText)+'</div>';
+  box.appendChild(div);
+ }
+}
+function retryWrong(){
+ var g=grade();
+ if(g.wrongItems.length===0){alert('目前沒有錯題可以重練。'); return;}
+ var wrongQuestions=g.wrongItems.map(function(x){return x.q;});
+ startPractice(wrongQuestions,true);
+}
+function restart(){startPractice(ALL_QUESTIONS,false);}
+$('prevBtn').addEventListener('click',function(){if(current>0){current--;render();scrollTop();}});
+$('nextBtn').addEventListener('click',function(){if(current<questions.length-1){current++;render();scrollTop();}else{showResult();}});
+$('clearBtn').addEventListener('click',function(){delete answers[questions[current].id];render();});
+$('submitBtn').addEventListener('click',showResult);
+$('reviewWrongBtn').addEventListener('click',function(){renderWrongList(true);});
+$('retryWrongBtn').addEventListener('click',retryWrong);
+$('backToQuizBtn').addEventListener('click',function(){current=0;render();scrollTop();});
+$('restartBtn').addEventListener('click',restart);
+$('shuffleRestartBtn').addEventListener('click',restart);
+$('topBtn').addEventListener('click',scrollTop);
+startPractice(ALL_QUESTIONS,false);
+})();
+</script>
+</body>
+</html>
